@@ -8,3 +8,4 @@
 
 #### Production Mode
     + Establish backend on heroku
+    + host: https://bot-backend-01.herokuapp.com
