@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 import datetime
+import django_heroku
+import dj_database_url
+from decouple import config,Csv
+
 try:
     from .constance import *
 except ImportError:
@@ -28,8 +32,7 @@ SECRET_KEY = 'idez&v7if*t@wtgbw3+3+b0$4(2insqku%y3dom646k0jq#ty+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '*', 'http://54.241.108.79']
-
+MODE=config("MODE", default="dev")
 
 # Application definition
 
@@ -49,6 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -143,31 +147,31 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-if os.getenv('APP', '') == 'app':
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': '360degree',
-            'USER': 'root',
-            'PASSWORD': '***',
-            'HOST': '***.rds.amazonaws.com',
-            'PORT': '3306',  # Server Port
-        }
-    }
-
+# development
+if config('MODE')=="dev":
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql_psycopg2',
+           'NAME': config('DB_NAME'),
+           'USER': config('DB_USER'),
+           'PASSWORD': config('DB_PASSWORD'),
+           'HOST': config('DB_HOST'),
+           'PORT': '5432',
+       }
+       
+   }
+# production
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {'charset': 'utf8mb4'},
-            'NAME': 'bot_db',
-            'USER': 'root',
-            'PASSWORD': 'test1423',
-            'HOST': 'localhost',
-            'PORT': '',  # Server Port
-        }
-    }
+   DATABASES = {
+       'default': dj_database_url.config(
+           default=config('DATABASE_URL')
+       )
+   }
 
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -208,25 +212,32 @@ EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = 'support@***'
 
 
-if os.getenv('APP', '') == 'themotherlode':
-    DJOSER = {
-        'SEND_ACTIVATION_EMAIL': True,
-        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-        'ACTIVATION_URL': 'https://www.thelode.org/activate/{uid}/{token}',
-        'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://test.localhost/']
-    }
-else:
-    DJOSER = {
-        'SEND_ACTIVATION_EMAIL': True,
-        'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-        'ACTIVATION_URL': 'http://localhost:3000/activate/{uid}/{token}',
-        'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://test.localhost/']
-    }
-
+DJOSER = {
+  'SEND_ACTIVATION_EMAIL': True,
+  'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+  'ACTIVATION_URL': 'http://localhost:3000/activate/{uid}/{token}',
+  'SOCIAL_AUTH_ALLOWED_REDIRECT_URIS': ['http://test.localhost/']
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_ROOT = 'statics'
-STATIC_URL = '/statics/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'statics')
+
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# configuring the location for media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 AUTH_USER_MODEL = 'authentication.User'
+
+# Configure Django App for Heroku.
+django_heroku.settings(locals())
