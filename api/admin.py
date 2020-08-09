@@ -80,33 +80,33 @@ class InviteItemAdmin(admin.ModelAdmin):
                 chart_data_accept = models.Job.objects.filter(status="Accepted").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
                 chart_data_complete = models.Job.objects.filter(status="Complete").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-                chart_data1 = models.Job.objects.exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-                chart_data1_accept = models.Job.objects.filter(status="Accepted").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-                chart_data1_complete = models.Job.objects.filter(status="Complete").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1 = models.Job.objects.exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1_accept = models.Job.objects.filter(status="Accepted").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1_complete = models.Job.objects.filter(status="Complete").exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-                chart_data2 = models.Job.objects.filter(bot=account).exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data2 = models.Job.objects.filter(bot=account).exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
                 chart_data3 = models.Job.objects.exclude(hourly=False, maxBudget__lt=1000.0).extra({'date': 'country'}).values("date").annotate(y=Count("id"))
             else:
                 chart_data = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
                 chart_data_accept = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0, status="Accepted").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
                 chart_data_complete = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0, status="Complete").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-                chart_data1 = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-                chart_data1_accept = models.Job.objects.filter(status="Accepted", hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-                chart_data1_complete = models.Job.objects.filter(status="Complete", hourly=False, maxBudget__lt=1000.0).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1 = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1_accept = models.Job.objects.filter(status="Accepted", hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data1_complete = models.Job.objects.filter(status="Complete", hourly=False, maxBudget__lt=1000.0).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-                chart_data2 = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).filter(bot=account).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+                chart_data2 = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).filter(bot=account).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
                 chart_data3 = models.Job.objects.filter(hourly=False, maxBudget__lt=1000.0).extra({'date': 'country'}).values("date").annotate(y=Count("id"))
         else:
             chart_data = models.Job.objects.extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
             chart_data_accept = models.Job.objects.filter(status="Accepted").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
             chart_data_complete = models.Job.objects.filter(status="Complete").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-            chart_data1 = models.Job.objects.extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-            chart_data1_accept = models.Job.objects.filter(status="Accepted").extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
-            chart_data1_complete = models.Job.objects.filter(status="Complete").extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+            chart_data1 = models.Job.objects.extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+            chart_data1_accept = models.Job.objects.filter(status="Accepted").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
+            chart_data1_complete = models.Job.objects.filter(status="Complete").extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
 
-            chart_data2 = models.Job.objects.filter(bot=account).extra({'date': 'hour(created_at)'}).values("date").annotate(y=Count("id"))
+            chart_data2 = models.Job.objects.filter(bot=account).extra({'date': 'date(created_at)'}).values("date").annotate(y=Count("id"))
             chart_data3 = models.Job.objects.extra({'date': 'country'}).values("date").annotate(y=Count("id"))
         
         if 'country' in request.GET:
