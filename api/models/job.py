@@ -59,6 +59,6 @@ class Job(models.Model):
         return ", ".join([b.name for b in self.bot.all()])
 
     def time_before(self):
-        time_now = timezone.now()+timedelta(hours=8)
+        time_now = timezone.now()
         time_delta = time_now - self.created_at
         return time_delta
