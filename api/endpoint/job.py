@@ -29,7 +29,7 @@ class AddJobView(APIView):
             return Response()
         memberDate = request_data['memberDate']
         request_data['memberDate'] = datetime.datetime.fromtimestamp(int(memberDate)/1000).isoformat()
-        request_data['createdAt'] = datetime.datetime.now()
+        request_data['created_at'] = datetime.datetime.now()
         serializer = JobSerializer(data=request_data)
         if serializer.is_valid():
             try:
@@ -58,12 +58,12 @@ class GetJobView(APIView):
         countries = account.countries.all()
         for country in countries:
             filtered_countries.append(country.name)
-        query = Job.objects.filter(createdAt__gte=datetime.datetime.now() - timedelta(minutes=account.time_delta)) \
+        query = Job.objects.filter(created_at__gte=datetime.datetime.now() - timedelta(minutes=account.time_delta)) \
         .filter(Q(maxBudget__gte=account.fixed_budget, hourly=False) | Q(maxBudget__gte=account.hourly_budget, hourly=True)) \
         .exclude(disabled=True).exclude(Q(bidder=account) | Q(bot=account)).exclude(country__in=filtered_countries)
         if account.payment_filter:
             query = query.filter(Q(v_payment=True) | Q(v_deposit=True))
-        jobs = query.order_by('-createdAt').all()
+        jobs = query.order_by('-created_at').all()
         keyworks = ['seo', 'ai', 'ar', 'ml', 'ux/ui', 'magento', 'wordpress', 'wix', 'tiktok', 'photoshop', 'shopify', 'drupal', 'game', 'design', 'wp', 'blog', 'india', 'odoo']
         job_list = []
         

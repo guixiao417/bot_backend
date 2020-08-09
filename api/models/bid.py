@@ -8,7 +8,7 @@ class Bid(models.Model):
     account = models.ForeignKey(Account, blank=True, default=None, on_delete=models.CASCADE)
     template = models.ForeignKey(Template, blank=True, default=None, on_delete=models.CASCADE)
     bot = models.BooleanField(default=False)
-    createdAt = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
     
     class Meta:
         db_table = 'bids'

@@ -5,7 +5,7 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields = ('id', 'title', 'hourly', 'currency', 'budget', 'maxBudget', 'recruiter', 'skills', 'country', 'completedJob', 'projectId', 'memberDate', 'v_identity', 'v_payment', 'v_deposit', 'v_email', 'v_profile', 'v_phone', 'router', 'createdAt')
+        fields = ('id', 'title', 'hourly', 'currency', 'budget', 'maxBudget', 'recruiter', 'skills', 'country', 'completedJob', 'projectId', 'memberDate', 'v_identity', 'v_payment', 'v_deposit', 'v_email', 'v_profile', 'v_phone', 'router', 'created_at')
 
 
 

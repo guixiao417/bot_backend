@@ -16,7 +16,7 @@ class GetJobView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request, format=None):
-        jobs = Job.objects.filter(createdAt__lte=datetime.datetime.now() - timedelta(days=8), check_status=False).all()
+        jobs = Job.objects.filter(created_at__lte=datetime.datetime.now() - timedelta(days=8), check_status=False).all()
         serializer = JobForBidSerializer(jobs, many=True)
         return Response(serializer.data)
 

@@ -26,10 +26,10 @@ class MessageView(APIView):
         account = Account.objects.filter(id=accountId).first()
         if account is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        createdAt = datetime.datetime.now()
+        created_at = datetime.datetime.now()
         NewMessage.objects.create(
             account=account,
-            createdAt=createdAt,
+            created_at=created_at,
             checked=False
         )
         return Response()

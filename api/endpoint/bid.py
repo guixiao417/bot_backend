@@ -111,13 +111,13 @@ class SaveBidView(APIView):
         if template is None:
             print("no template")
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        createdAt = datetime.datetime.now()
+        created_at = datetime.datetime.now()
         Bid.objects.create(
             job=job,
             account=account,
             template=template,
             bot=bot,
-            createdAt=createdAt
+            created_at=created_at
         )
         return Response('success')
        

@@ -30,7 +30,7 @@ class Job(models.Model):
     check_status = models.BooleanField(default=False)
     status = models.CharField(max_length=400, blank=True, null=True, default='')
     bot = models.ManyToManyField(Account, blank=True, null=True, related_name='bots')
-    createdAt = models.DateTimeField(default=timezone.now()+timedelta(hours=8))
+    created_at = models.DateTimeField(default=timezone.now()+timedelta(hours=8))
 
     class Meta:
         db_table = 'jobs'
@@ -60,5 +60,5 @@ class Job(models.Model):
 
     def time_before(self):
         time_now = timezone.now()+timedelta(hours=8)
-        time_delta = time_now - self.createdAt
+        time_delta = time_now - self.created_at
         return time_delta
