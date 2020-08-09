@@ -148,18 +148,18 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 # development
-if config('MODE')=="dev":
+if MODE=="dev":
    DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql_psycopg2',
-           'NAME': config('DB_NAME'),
-           'USER': config('DB_USER'),
-           'PASSWORD': config('DB_PASSWORD'),
-           'HOST': config('DB_HOST'),
-           'PORT': '5432',
-       }
-       
-   }
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {'charset': 'utf8mb4'},
+            'NAME': 'bot_db',
+            'USER': 'root',
+            'PASSWORD': 'test1423',
+            'HOST': 'localhost',
+            'PORT': '',  # Server Port
+        }
+    }
 # production
 else:
    DATABASES = {
