@@ -4,7 +4,7 @@
 
 
 #### Development Mode
-    + `ngrok http -host-header="0.0.0.0:8000" 8000`
+    + ngrok http -host-header="0.0.0.0:8000" 8000
 
 #### Production Mode
     + Establish backend on heroku
