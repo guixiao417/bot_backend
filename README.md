@@ -1,12 +1,10 @@
 
-### start test script
-`./manage.py  test mobile_auth.tests.user --keepdb`
+### Bot Backend
+`Get data from crwaler and save it to db`
 
 
-### Reference
-```python
-class FeedBackView(generics.CreateAPIView):
-    queryset = FeedBack.objects.all()
-    serializer_class = FeedBackSerializer
-```
+#### Development Mode
+    + ```ngrok http -host-header="0.0.0.0:8000" 8000```
 
+#### Production Mode
+    + Establish backend on heroku
