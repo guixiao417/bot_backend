@@ -1,10 +1,11 @@
 import uuid
 from django.db import models
-from django.utils import timezone
-from django.utils.html import format_html
 from api.models import Country
+from authentication.models import User
 
-class Account(models.Model):
+
+class Filter(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE, related_name='filter')
     name = models.CharField(max_length=400, blank=True, default='')
     description = models.TextField(blank=True, default='')
     private_key = models.UUIDField(primary_key = False, default = uuid.uuid4, editable = False) 

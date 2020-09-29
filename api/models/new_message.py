@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from api.models import Account
+from authentication.models import User
+
 
 class NewMessage(models.Model):
-    account = models.ForeignKey(Account, blank=True, default=1, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     checked = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now())
     class Meta:

@@ -6,13 +6,13 @@ from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from api.models import Job, Category, Template, Url, Account, Bid, Tag
-from api.serializers import JobSerializer
-from django.db.models import Q
+from api.models import Job, Category, Template, Url, Filter, Bid, Tag
+from authentication.models import User
+
 
 class BidView(APIView):
     permission_classes = [permissions.AllowAny]
-    accountId = None
+    username = None
     title = None
     description = None
     skills = None
@@ -20,13 +20,18 @@ class BidView(APIView):
 
     def post(self, request, format=None):
         request_data = request.data
-        self.accountId = int(request_data['accountId'])
+        self.username = request_data['accountId']
+        user = User.objects.filter(username=self.username).first()
+        if not user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         self.title = request_data['title']
         self.description = request_data['description']
         self.skills = request_data['skills']
-        self.account = Account.objects.filter(id=self.accountId).first()
-        if self.account is None:
+        _filter = user.filter.get()
+        if not _filter:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         tags = self.get_ranked_tags()
         template = self.get_template()
         urls = self.get_urls(tags)
@@ -90,31 +95,28 @@ class SaveBidView(APIView):
     def post(self, request, format=None):
         projectId = request.data['projectId']
         print(projectId)
-        accountId = request.data['accountId']
-        print(accountId)
+        username = request.data['accountId']
         bot = request.data['bot']
-        print(bot)
         templateId = request.data['templateID']
 
-        account = Account.objects.filter(id=accountId).first()
-        if account is None:
-            print("no account")
+        user = User.objects.filter(username=username).first()
+        if user is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         job = Job.objects.filter(projectId=projectId).first()
         if job is None:
             print("no job")
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        job.bidder.add(account.id)
-        job.save()
-   
+
         template = Template.objects.filter(id=templateId).first()
         if template is None:
             print("no template")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         created_at = datetime.datetime.now()
+
         Bid.objects.create(
             job=job,
-            account=account,
+            user=user,
             template=template,
             bot=bot,
             created_at=created_at

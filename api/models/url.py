@@ -1,7 +1,8 @@
 from django.db import models
-from django.utils import timezone
-from django.utils.html import format_html
-from api.models import Category, Tag
+from api.models import Tag
+from authentication.models import User
+
+
 class Url(models.Model):
     BIDDER_CHOICES = (
         ('cf', 'CF'),
@@ -11,9 +12,11 @@ class Url(models.Model):
         ('cr', 'ChenRi'),
         ('yd', 'YD')
     )
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     url = models.TextField(blank=True, default='')
     tags = models.ManyToManyField(Tag)
     developer = models.CharField(max_length=400, choices=BIDDER_CHOICES, blank=True, default='')
+
     class Meta:
         db_table = 'urls'
 

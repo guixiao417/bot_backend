@@ -7,9 +7,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
-from api.models import Job, Account, Country
+from api.models import Job, Filter, Country
 from api.serializers import JobSerializer, JobForBidSerializer
 from ctrl.string_filter import check_title
+
 
 class AddJobView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -44,14 +45,13 @@ class AddJobView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class GetJobView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, format=None):
         request_data = request.data
-        accountId = request_data['accountId']
-        account = Account.objects.filter(id=accountId).first()
+        username = request_data['accountId']
+        account = Filter.objects.filter(user__username=username).first()
         if account is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         filtered_countries = []
@@ -76,14 +76,11 @@ class GetJobView(APIView):
             if check_title(keyworks, title_tokens):
                 continue
 
-            job.bot.add(account.id)
-            job.save()
             job_list.append(job)
             
         jobs = job_list[:account.job_count]
         serializer = JobForBidSerializer(jobs, many=True)
         return Response(serializer.data)
-
 
 
 class CheckJobView(APIView):
@@ -92,14 +89,13 @@ class CheckJobView(APIView):
     def post(self, request, format=None):
         request_data = request.data
         router = request_data['router']
-        accountId = request_data['accountId']
-        account = Account.objects.filter(id=accountId).first()
+        username = request_data['accountId']
+        account = Filter.objects.filter(user__username=username).first()
         if account is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         job = Job.objects.filter(router=router).first()
         if job is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         job.checked = True
-        job.bot.add(account.id)
         job.save()
         return Response()

@@ -20,6 +20,7 @@ class GetJobView(APIView):
         serializer = JobForBidSerializer(jobs, many=True)
         return Response(serializer.data)
 
+
 class CheckJobView(APIView):
     permission_classes = [permissions.AllowAny]
 

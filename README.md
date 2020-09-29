@@ -1,4 +1,9 @@
 
+###
+Activate virtualenv
+`.\venv\Scripts\activate.bat`
+
+
 ### Bot Backend
 `Get data from crwaler and save it to db`
 

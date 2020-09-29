@@ -1,12 +1,12 @@
 from django.db import models
-from django.utils import timezone
-from django.utils.html import format_html
 from api.models import Tag
+
 
 class Category(models.Model):
     name = models.CharField(max_length=400, blank=True, default='')
     tags = models.ManyToManyField(Tag)
     description = models.TextField(blank=True, default='')
+
     class Meta:
         db_table = 'categories'
 

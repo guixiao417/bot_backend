@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.html import format_html
-from api.models import Category, Account
 from django.utils.timezone import timedelta
+
 
 class Job(models.Model):
     title = models.CharField(max_length=400, blank=True, default='')
@@ -23,13 +23,11 @@ class Job(models.Model):
     v_phone = models.BooleanField(default=False)
     count = models.IntegerField(default=1)
     router = models.CharField(max_length=400, blank=True, default='')
-    bidder = models.ManyToManyField(Account, blank=True, null=True, related_name="bidders")
     recruiter = models.BooleanField(default=False)
     checked = models.BooleanField(default=False)
     disabled = models.BooleanField(default=False)
     check_status = models.BooleanField(default=False)
     status = models.CharField(max_length=400, blank=True, null=True, default='')
-    bot = models.ManyToManyField(Account, blank=True, null=True, related_name='bots')
     created_at = models.DateTimeField(default=timezone.now()+timedelta(hours=8))
 
     class Meta:
