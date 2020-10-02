@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.html import format_html
 from authentication.models import User
+from api.models import Category
 
 
 class Template(models.Model):
@@ -16,6 +17,7 @@ class Template(models.Model):
     template = models.TextField(blank=True, default='')
     developer = models.CharField(max_length=400, choices=BIDDER_CHOICES, blank=True, default='')
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'templates'

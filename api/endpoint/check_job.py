@@ -6,10 +6,8 @@ from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
-from api.models import Job, Account, Country
-from api.serializers import JobSerializer, JobForBidSerializer
-from ctrl.string_filter import check_title
+from api.models import Job, Country
+from api.serializers import JobForBidSerializer
 
 
 class GetJobView(APIView):

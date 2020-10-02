@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.timezone import timedelta
+from api.models import Category
+from authentication.models import User
 
 
 class Job(models.Model):
@@ -27,8 +29,11 @@ class Job(models.Model):
     checked = models.BooleanField(default=False)
     disabled = models.BooleanField(default=False)
     check_status = models.BooleanField(default=False)
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
+    bidder = models.ManyToManyField(User, blank=True, null=True, related_name="bidders")
+    rate = models.FloatField(default=0)
     status = models.CharField(max_length=400, blank=True, null=True, default='')
-    created_at = models.DateTimeField(default=timezone.now()+timedelta(hours=8))
+    created_at = models.DateTimeField(default=timezone.now())
 
     class Meta:
         db_table = 'jobs'
@@ -51,7 +56,7 @@ class Job(models.Model):
         )
 
     def sent_proposal(self):
-        return ", ".join([b.name for b in self.bidder.all()])
+        return ", ".join([b.username for b in self.bidder.all()])
 
     def read_by_bot(self):
         return ", ".join([b.name for b in self.bot.all()])

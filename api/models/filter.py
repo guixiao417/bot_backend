@@ -18,7 +18,7 @@ class Filter(models.Model):
     notification = models.BooleanField(default=False)
 
     class Meta:
-        db_table = 'accounts'
+        db_table = 'filter'
 
     def __str__(self):
         """TODO: Docstring for __repr__.

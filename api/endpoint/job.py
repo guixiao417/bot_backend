@@ -7,9 +7,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
-from api.models import Job, Filter, Country
+from api.models import Job, Filter, Country, Category
 from api.serializers import JobSerializer, JobForBidSerializer
 from ctrl.string_filter import check_title
+from authentication.models import User
 
 
 class AddJobView(APIView):
@@ -17,6 +18,10 @@ class AddJobView(APIView):
 
     def post(self, request, format=None):
         request_data = request.data
+        category_detail = self.get_ranked_categories(request_data['title'], request_data['description'], request_data['skills'])
+        if len(category_detail):
+            request_data['category'] = category_detail[0]['category'].id
+            request_data['rate'] = category_detail[0]['rate']
         country_name = request_data['country']
         country = Country.objects.filter(name=country_name).first()
         if country is None:
@@ -25,7 +30,6 @@ class AddJobView(APIView):
         project = Job.objects.filter(projectId=projectId).first()
         if project is not None:
             project.count = project.count + 1
-            
             project.save()
             return Response()
         memberDate = request_data['memberDate']
@@ -41,8 +45,29 @@ class AddJobView(APIView):
                 serializer.is_valid()
                 serializer.save()
             return Response(serializer.data)
-        print(serializer.errors)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_ranked_categories(self, title, description, skills):
+        categories = Category.objects.all()
+        category_list = []
+        for category in categories:
+            count = 0
+            tags = category.tags.all()
+            for tag in tags:
+                tag_name = tag.name
+                count = count + title.lower().count(tag_name)
+                count = count + description.lower().count(tag_name)
+                count = count + skills.lower().count(tag_name)
+            if count:
+                category_list.append(
+                    {
+                        'category': category,
+                        'rate': round(count / len(tags), 2)
+                    }
+                )
+        category_list.sort(key=lambda x: x['rate'], reverse=True)
+        return category_list
 
 
 class GetJobView(APIView):
@@ -51,6 +76,9 @@ class GetJobView(APIView):
     def post(self, request, format=None):
         request_data = request.data
         username = request_data['accountId']
+        user = User.objects.filter(username=username).first()
+        if not user:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         account = Filter.objects.filter(user__username=username).first()
         if account is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -60,11 +88,12 @@ class GetJobView(APIView):
             filtered_countries.append(country.name)
         query = Job.objects.filter(created_at__gte=datetime.datetime.now() - timedelta(minutes=account.time_delta)) \
         .filter(Q(maxBudget__gte=account.fixed_budget, hourly=False) | Q(maxBudget__gte=account.hourly_budget, hourly=True)) \
-        .exclude(disabled=True).exclude(Q(bidder=account) | Q(bot=account)).exclude(country__in=filtered_countries)
+        .exclude(disabled=True).exclude(Q(bidder=user)).exclude(country__in=filtered_countries)
         if account.payment_filter:
             query = query.filter(Q(v_payment=True) | Q(v_deposit=True))
         jobs = query.order_by('-created_at').all()
-        keyworks = ['seo', 'ai', 'ar', 'ml', 'ux/ui', 'magento', 'wordpress', 'wix', 'tiktok', 'photoshop', 'shopify', 'drupal', 'game', 'design', 'wp', 'blog', 'india', 'odoo']
+        keyworks = ['seo', 'ai', 'ar', 'ml', 'ux/ui', 'magento', 'wordpress', 'wix', 'tiktok', 'photoshop', 'shopify',
+                    'drupal', 'game', 'design', 'wp', 'blog', 'india', 'odoo']
         job_list = []
         
         for job in jobs:

@@ -68,9 +68,10 @@ class DateFilter(SimpleListFilter):
 
 @admin.register(models.Job)
 class InviteItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title_view', 'hourly', 'currency', 'budget', 'country', 'completedJob', 'memberDate', 'v_payment', 'v_deposit', 'time_before', 'created_at', 'sent_proposal', 'read_by_bot', 'status', 'check_status')
+    list_display = ('id', 'title_view', 'hourly', 'currency', 'budget', 'country', 'completedJob', 'memberDate',
+                    'v_payment', 'v_deposit', 'time_before', 'category', 'sent_proposal')
     actions = [make_checked, make_disabled,]
-    list_filter = (JobLevelFilter, DateFilter, 'status', 'check_status')
+    list_filter = (JobLevelFilter, DateFilter, 'category', 'bidder')
     search_fields = ('title', 'skills', )
 
     def changelist_view(self, request, extra_context=None):
@@ -198,7 +199,7 @@ class InviteItemAdmin(admin.ModelAdmin):
 @admin.register(models.Category)
 class InviteItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'get_tags', 'description')
-
+    filter_horizontal = ('tags',)
 
 @admin.register(models.Template)
 class InviteItemAdmin(admin.ModelAdmin):
@@ -222,6 +223,17 @@ class InviteItemAdmin(admin.ModelAdmin):
     list_display = ('id','user', 'name', 'notification', 'description', 'private_key', 'fixed_budget', 'hourly_budget', 'payment_filter', 'time_delta', 'job_count', 'filter_countries')
     filter_horizontal = ('countries',)
 
+    def save_form(self, request, form, change):
+        obj = super().save_form(request, form, change)
+        if not change:
+            obj.user = request.user
+        return obj
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
 
 @admin.register(models.Url)
 class InviteItemAdmin(admin.ModelAdmin):
@@ -243,7 +255,7 @@ class InviteItemAdmin(admin.ModelAdmin):
 
 @admin.register(models.Bid)
 class InviteItemAdmin(admin.ModelAdmin):
-    list_display = ('id',  'job', 'template', 'bot', 'created_at')
+    list_display = ('id',  'job', 'user', 'template', 'category', 'rate', 'created_at')
 
     def save_form(self, request, form, change):
         obj = super().save_form(request, form, change)
