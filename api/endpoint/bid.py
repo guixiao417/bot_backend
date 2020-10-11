@@ -25,8 +25,6 @@ class BidView(APIView):
         skills = request_data['skills']
         project_id = request_data['projectId']
         job = Job.objects.filter(projectId=project_id).first()
-        job.bidder.add(user.id)
-        job.save()
         if job is None:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'detail': 'No Job'})
 
@@ -45,6 +43,8 @@ class BidView(APIView):
             job=job
         )
         response = {"bid": template.template}
+        job.bidder.add(user.id)
+        job.save()
         return Response(response)
 
     def get_ranked_categories(self, title, description, skills):
