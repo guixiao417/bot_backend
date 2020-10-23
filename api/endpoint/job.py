@@ -54,7 +54,7 @@ class AddJobView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_ranked_categories(self, user, title, description, skills):
-        categories = Category.filter(user=user).objects.all()
+        categories = Category.objects.filter(user=user).all()
         category_list = []
         for category in categories:
             count = 0
