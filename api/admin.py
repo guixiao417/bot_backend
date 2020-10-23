@@ -69,7 +69,7 @@ class DateFilter(SimpleListFilter):
 @admin.register(models.Job)
 class InviteItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'title_view', 'hourly', 'currency', 'budget', 'country', 'completedJob', 'memberDate',
-                    'v_payment', 'v_deposit', 'time_before', 'category', 'sent_proposal')
+                    'v_payment', 'v_deposit', 'time_before', 'view_category', 'sent_proposal')
     actions = [make_checked, make_disabled,]
     list_filter = (JobLevelFilter, DateFilter, 'category', 'bidder')
     search_fields = ('title', 'skills', )
@@ -200,6 +200,19 @@ class InviteItemAdmin(admin.ModelAdmin):
 class InviteItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'get_tags', 'description')
     filter_horizontal = ('tags',)
+
+    def save_form(self, request, form, change):
+        obj = super().save_form(request, form, change)
+        if not change:
+            obj.user = request.user
+        return obj
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(user=request.user)
+
 
 @admin.register(models.Template)
 class InviteItemAdmin(admin.ModelAdmin):

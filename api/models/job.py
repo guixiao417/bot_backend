@@ -29,11 +29,11 @@ class Job(models.Model):
     checked = models.BooleanField(default=False)
     disabled = models.BooleanField(default=False)
     check_status = models.BooleanField(default=False)
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
+    category = models.ManyToManyField(Category, null=True, blank=True)
     bidder = models.ManyToManyField(User, blank=True, null=True, related_name="bidders")
     rate = models.FloatField(default=0)
     status = models.CharField(max_length=400, blank=True, null=True, default='')
-    created_at = models.DateTimeField(default=timezone.now())
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = 'jobs'
@@ -65,3 +65,13 @@ class Job(models.Model):
         time_now = timezone.now()
         time_delta = time_now - self.created_at
         return time_delta
+
+    def view_category(self):
+        categories = self.category.all()
+        category_name = ''
+        for category in categories:
+            if category.user:
+                category_name += "%s-%s\n" % (category.user.username, category.name)
+            else:
+                category_name += "None-%s\n" % category.name
+        return category_name

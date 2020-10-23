@@ -1,6 +1,6 @@
 import os
 """ aws access info """
-DOMAIN = 'https://www.thelode.org'
+DOMAIN = 'https://www.job-assist'
 AWS_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxx'
 AWS_SECRET_ACCESS_KEY = 'xxxxxxxxxxxxxxxxxx'
 BUCKET_NAME_PRODUCT = 'xxxxxxxxxxxxxxxxxx'

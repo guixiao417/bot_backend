@@ -18,10 +18,15 @@ class AddJobView(APIView):
 
     def post(self, request, format=None):
         request_data = request.data
-        category_detail = self.get_ranked_categories(request_data['title'], request_data['description'], request_data['skills'])
-        if len(category_detail):
-            request_data['category'] = category_detail[0]['category'].id
-            request_data['rate'] = category_detail[0]['rate']
+
+        users = User.objects.all()
+        for user in users:
+            category_detail = self.get_ranked_categories(user, request_data['title'], request_data['description'], request_data['skills'])
+            if len(category_detail):
+                if 'category' not in request_data:
+                    request_data['category'] = [category_detail[0]['category'].id]
+                else:
+                    request_data['category'].append(category_detail[0]['category'].id)
         country_name = request_data['country']
         country = Country.objects.filter(name=country_name).first()
         if country is None:
@@ -48,7 +53,7 @@ class AddJobView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_ranked_categories(self, title, description, skills):
+    def get_ranked_categories(self, user, title, description, skills):
         categories = Category.objects.all()
         category_list = []
         for category in categories:
