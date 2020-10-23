@@ -198,7 +198,7 @@ class InviteItemAdmin(admin.ModelAdmin):
 
 @admin.register(models.Category)
 class InviteItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'get_tags', 'description')
+    list_display = ('id', 'name', 'get_tags', 'description', 'user')
     filter_horizontal = ('tags',)
 
     def save_form(self, request, form, change):
