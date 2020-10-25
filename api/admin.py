@@ -215,8 +215,14 @@ class InviteItemAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Template)
-class InviteItemAdmin(admin.ModelAdmin):
+class TemplateAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'show_template', 'developer')
+
+    def get_form(self, request, *args, **kwargs):
+        form = super(TemplateAdmin, self).get_form(request, **kwargs)
+        user = request.user
+        form.base_fields['category'].queryset = models.Category.objects.filter(user=user)
+        return form
 
     def save_form(self, request, form, change):
         obj = super().save_form(request, form, change)
